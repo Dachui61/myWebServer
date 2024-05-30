@@ -4,6 +4,7 @@
 #include <iostream>
 #include <locker.h>
 #include <list>
+#include "LogLevel.h"
 
 using namespace std;
 
