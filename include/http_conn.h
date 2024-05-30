@@ -100,7 +100,7 @@ class http_conn{
         int m_read_idx;
         //m_read_buf读取的位置m_checked_idx
         int m_checked_idx;
-        //m_read_buf中已经解析的字符个数
+        //m_start_line是行在buffer中的起始位置，将该位置后面的数据赋给text
         int m_start_line;
 
         //存储发出的响应报文数据

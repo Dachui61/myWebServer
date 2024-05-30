@@ -128,6 +128,9 @@ http_conn::HTTP_CODE http_conn::process_read()
     while((m_check_state==CHECK_STATE_CONTENT && line_status==LINE_OK)||((line_status=parse_line())==LINE_OK))
     {
         text = get_line();
+
+        m_start_line=m_checked_idx;
+        
         switch (m_check_state)
         {
         //解析请求行
@@ -255,4 +258,43 @@ http_conn::HTTP_CODE http_conn::parse_request_line(char *text)
     // 获得了完整的HTTP请求
 
     return NO_REQUEST;
+}
+
+//从状态机，用于分析出一行内容
+//返回值为行的读取状态，有LINE_OK,LINE_BAD,LINE_OPEN
+
+//m_read_idx指向缓冲区m_read_buf的数据末尾的下一个字节
+//m_checked_idx指向从状态机当前正在分析的字节
+// \r\n为一行
+http_conn::LINE_STATUS http_conn::parse_line()
+{
+    char temp;
+    for(;m_checked_idx < m_read_idx;m_checked_idx++){
+        temp = m_read_buf[m_checked_idx];
+        
+        if(temp == '\r'){
+            //检查下一个字符是不是 '\n'
+            if((m_checked_idx+1) == m_read_idx){
+                //到buf的末尾了，需要继续接受
+                return LINE_OPEN;
+            }else if(m_read_buf[m_checked_idx+1]=='\n'){
+                m_read_buf[m_checked_idx++] = '\0';
+                m_read_buf[m_checked_idx++] = '\0';
+                return LINE_OK;
+            }
+            return LINE_BAD;
+        //如果当前字符是\n，也有可能读取到完整行
+        //一般是上次读取到\r就到buffer末尾了，没有接收完整，再次接收时会出现这种情况
+        }else if(temp == '\n'){
+            //前一个字符是\r，则接收完整
+            if(m_checked_idx>1&&m_read_buf[m_checked_idx-1]=='\r')
+            {
+                m_read_buf[m_checked_idx-1]='\0';
+                m_read_buf[m_checked_idx++]='\0';
+                return LINE_OK;
+            }
+            return LINE_BAD;
+        }
+    }
+    return LINE_OPEN;
 }
