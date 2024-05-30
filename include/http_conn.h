@@ -9,6 +9,7 @@
 #include <iostream>
 #include "LogLevel.h"
 #include "sql_conn.h"
+#include "cstring"
 
 
 class http_conn{
@@ -132,3 +133,4 @@ class http_conn{
 
         Logger *logger = new Logger("./log/http_conn.log", LogLevel::DEBUG);
 };
+
