@@ -11,9 +11,10 @@
 template<typename T>
 class threadpool{
     public:
+        //connPool是数据库连接池指针
         //thread_number是线程池中线程的数量
         //max_requests是请求队列中最多允许的、等待处理的请求的数量
-        //connPool是数据库连接池指针
+        
         threadpool(connection_pool *connPool, int thread_number = 8, int max_request = 10000);
         ~threadpool();
 

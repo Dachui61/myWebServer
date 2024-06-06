@@ -4,9 +4,15 @@
 #include <sys/epoll.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <sys/uio.h>
 #include <unistd.h>
 #include <errno.h>
+#include <stdio.h>
 #include <iostream>
+#include <stdlib.h>
+#include <map>
 #include "LogLevel.h"
 #include "sql_conn.h"
 #include "cstring"
@@ -132,5 +138,6 @@ class http_conn{
         int bytes_have_send;        //已发送字节数
 
         Logger *logger = new Logger("./log/http_conn.log", LogLevel::DEBUG);
+        locker m_lock;
 };
 
